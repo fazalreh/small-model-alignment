@@ -1,0 +1,130 @@
+{
+  "sft": {
+    "initial_val_loss": 1.39591502445542,
+    "final_val_loss": 1.3310447903232847,
+    "best": {
+      "step": 900,
+      "val_loss": 1.3309999406477377,
+      "val_ppl": 3.784826097470377,
+      "val_seq_nll": 295.4287468261719,
+      "val_tokens": 221960
+    },
+    "steps": 930
+  },
+  "dpo": {
+    "dpo_hh": {
+      "initial": {
+        "type": "eval",
+        "step": 0,
+        "val_loss": 0.6931471824645996,
+        "val_reward_accuracy": 0.0,
+        "val_reward_margin": 0.0,
+        "val_chosen_reward": 0.0,
+        "val_rejected_reward": 0.0,
+        "val_policy_chosen_logp": -119.48026772880554,
+        "val_policy_rejected_logp": -115.10773572349548,
+        "val_pairs": 1000
+      },
+      "final": {
+        "type": "eval",
+        "step": 469,
+        "elapsed_s": 449.7935965061188,
+        "val_loss": 0.634787083344534,
+        "val_reward_accuracy": 0.636,
+        "val_reward_margin": 0.2519369699014351,
+        "val_chosen_reward": -0.4023452332665329,
+        "val_rejected_reward": -0.654282204089337,
+        "val_policy_chosen_logp": -123.50371998977661,
+        "val_policy_rejected_logp": -121.65055766201019,
+        "val_pairs": 1000
+      },
+      "best": {
+        "step": 400,
+        "val_loss": 0.6322881313078106,
+        "val_reward_accuracy": 0.644,
+        "val_reward_margin": 0.2296125631444156,
+        "val_chosen_reward": -0.27754578420016335,
+        "val_rejected_reward": -0.5071583470653058,
+        "val_policy_chosen_logp": -122.25572551822663,
+        "val_policy_rejected_logp": -120.17931911373138,
+        "val_pairs": 1000,
+        "reference": "/root/project/outputs/sft/best"
+      }
+    },
+    "dpo_uf": {
+      "initial": {
+        "type": "eval",
+        "step": 0,
+        "val_loss": 0.6931471824645996,
+        "val_reward_accuracy": 0.0,
+        "val_reward_margin": 0.0,
+        "val_chosen_reward": 0.0,
+        "val_rejected_reward": 0.0,
+        "val_policy_chosen_logp": -319.7102245513201,
+        "val_policy_rejected_logp": -276.5079370933771,
+        "val_pairs": 1000
+      },
+      "final": {
+        "type": "eval",
+        "step": 469,
+        "elapsed_s": 741.3722002506256,
+        "val_loss": 0.4883607353319867,
+        "val_reward_accuracy": 0.765,
+        "val_reward_margin": 1.0798165668062867,
+        "val_chosen_reward": -0.3109431532481685,
+        "val_rejected_reward": -1.3907597196860662,
+        "val_policy_chosen_logp": -322.81965604799984,
+        "val_policy_rejected_logp": -290.4155340839624,
+        "val_pairs": 1000
+      },
+      "best": {
+        "step": 400,
+        "val_loss": 0.4854162826091616,
+        "val_reward_accuracy": 0.775,
+        "val_reward_margin": 1.0415346936378629,
+        "val_chosen_reward": -0.14976546571752988,
+        "val_rejected_reward": -1.1913001557607203,
+        "val_policy_chosen_logp": -321.20787918615343,
+        "val_policy_rejected_logp": -288.42093843638895,
+        "val_pairs": 1000,
+        "reference": "/root/project/outputs/sft/best"
+      }
+    }
+  },
+  "lora_dpo": {
+    "first_eval": {
+      "eval_loss": 0.6877905130386353,
+      "eval_model_preparation_time": 0.0153,
+      "eval_runtime": 0.2443,
+      "eval_samples_per_second": 90.036,
+      "eval_steps_per_second": 12.278,
+      "eval_rewards/chosen": 0.0116301653906703,
+      "eval_rewards/rejected": -0.0007864851504564285,
+      "eval_rewards/accuracies": 0.6111111044883728,
+      "eval_rewards/margins": 0.012416648678481579,
+      "eval_logps/chosen": -173.86517333984375,
+      "eval_logps/rejected": -125.8128890991211,
+      "eval_logits/chosen": 0.4870084226131439,
+      "eval_logits/rejected": -0.017551949247717857,
+      "epoch": 0.2,
+      "step": 5
+    },
+    "last_eval": {
+      "eval_loss": 0.13546957075595856,
+      "eval_model_preparation_time": 0.0153,
+      "eval_runtime": 0.2617,
+      "eval_samples_per_second": 84.08,
+      "eval_steps_per_second": 11.465,
+      "eval_rewards/chosen": 1.075581669807434,
+      "eval_rewards/rejected": -0.9698598384857178,
+      "eval_rewards/accuracies": 1.0,
+      "eval_rewards/margins": 2.0454416275024414,
+      "eval_logps/chosen": -163.2256622314453,
+      "eval_logps/rejected": -135.5036163330078,
+      "eval_logits/chosen": 0.4128515422344208,
+      "eval_logits/rejected": 0.30346688628196716,
+      "epoch": 3.0,
+      "step": 75
+    }
+  }
+}

@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.venv/
+# checkpoints and large regenerable data stay out of git; metrics, generations, pairs, judgments are committed
+outputs/**/best/
+outputs/**/final/
+outputs/**/trainer/
+outputs/data/*.jsonl
+outputs/generations/sanity_*/
+*.safetensors
+*.bin
+kaggle_upload/
+kaggle_upload.zip

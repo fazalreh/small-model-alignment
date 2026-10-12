@@ -1,0 +1,86 @@
+{
+  "args": {
+    "task": "all",
+    "out_dir": "/root/project/outputs/data",
+    "model_name": "Qwen/Qwen2.5-0.5B",
+    "seed": 42,
+    "sft_train_size": 30000,
+    "sft_val_size": 1000,
+    "sft_max_length": 512,
+    "sft_max_prompt_length": 256,
+    "sft_require_fit": 1,
+    "dpo_train_size": 15000,
+    "dpo_val_size": 1000,
+    "dpo_max_length": 512,
+    "dpo_max_prompt_length": 256,
+    "hh_harmless_fraction": 0.5,
+    "uf_min_score_margin": 1.0,
+    "alpaca_size": 300
+  },
+  "alpaca_eval": {
+    "full_size": 805,
+    "subset": 300,
+    "seed": 42
+  },
+  "n_eval_prompts_for_decontamination": 485,
+  "sft_train_sft": {
+    "seen": 59174,
+    "kept": 30000
+  },
+  "sft_test_sft": {
+    "seen": 2032,
+    "kept": 1000
+  },
+  "sft_sizes": {
+    "train": 30000,
+    "val": 1000
+  },
+  "hh_harmless-base_train": {
+    "total": 42537,
+    "single_turn": 12188,
+    "kept": 12187
+  },
+  "hh_helpful-base_train": {
+    "total": 43835,
+    "single_turn": 12783,
+    "kept": 12778
+  },
+  "hh_harmless-base_test": {
+    "total": 2312,
+    "single_turn": 658,
+    "kept": 658
+  },
+  "hh_helpful-base_test": {
+    "total": 2354,
+    "single_turn": 667,
+    "kept": 667
+  },
+  "hh_sizes": {
+    "train": 15000,
+    "val": 1000,
+    "train_harmless": 7500,
+    "val_harmless": 500
+  },
+  "uf_train_prefs": {
+    "total": 61135,
+    "multi_turn": 0,
+    "low_margin": 18447,
+    "dup_or_empty": 505,
+    "contaminated": 4,
+    "prompt_too_long": 8705,
+    "kept_before_cap": 33474
+  },
+  "uf_test_prefs": {
+    "total": 2000,
+    "multi_turn": 0,
+    "low_margin": 651,
+    "dup_or_empty": 15,
+    "contaminated": 0,
+    "prompt_too_long": 239,
+    "kept_before_cap": 1095
+  },
+  "uf_sizes": {
+    "train": 15000,
+    "val": 1000
+  }
+}

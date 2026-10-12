@@ -1,0 +1,48 @@
+{
+  "config": {
+    "config": "configs/sft.yaml",
+    "model_name": "Qwen/Qwen2.5-0.5B",
+    "train_path": "/root/project/outputs/data/sft_train.jsonl",
+    "val_path": "/root/project/outputs/data/sft_val.jsonl",
+    "output_dir": "/root/project/outputs/sft",
+    "max_length": 512,
+    "max_train_examples": 30000,
+    "max_val_examples": 1000,
+    "per_device_batch_size": 16,
+    "eval_batch_size": 32,
+    "gradient_accumulation_steps": 2,
+    "learning_rate": 2e-05,
+    "warmup_ratio": 0.03,
+    "lr_schedule": "cosine",
+    "min_lr_ratio": 0.0,
+    "weight_decay": 0.1,
+    "adam_beta1": 0.9,
+    "adam_beta2": 0.999,
+    "adam_eps": 1e-08,
+    "max_grad_norm": 1.0,
+    "num_epochs": 1,
+    "precision": "auto",
+    "gradient_checkpointing": false,
+    "eval_every": 100,
+    "log_every": 10,
+    "seed": 42,
+    "attn_implementation": "sdpa"
+  },
+  "precision": "bf16",
+  "effective_batch_size": 32,
+  "train_examples": 30000,
+  "val_examples": 1000,
+  "total_optimizer_steps": 938,
+  "warmup_steps": 28,
+  "loss_reduction": "token-mean over all response tokens in the accumulation window",
+  "env": {
+    "torch": "2.6.0+cu124",
+    "transformers": "4.51.3",
+    "cuda_available": true,
+    "gpus": [
+      "NVIDIA H100 80GB HBM3"
+    ],
+    "datasets": "3.6.0"
+  },
+  "trainable_params": 494032768
+}

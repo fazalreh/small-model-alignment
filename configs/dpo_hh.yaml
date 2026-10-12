@@ -1,0 +1,23 @@
+# From-scratch DPO on single-turn HH-RLHF (harmless-base + helpful-base)
+track: hh
+sft_checkpoint: outputs/sft/best
+train_path: outputs/data/hh_train.jsonl
+val_path: outputs/data/hh_val.jsonl
+output_dir: outputs/dpo_hh
+max_length: 512
+max_train_pairs: 15000
+max_val_pairs: 1000
+per_device_batch_size: 4      # 4 pairs x 8 accumulation = 32 pairs / optimizer step (guide: 1 x 32)
+gradient_accumulation_steps: 8
+beta: 0.1
+learning_rate: 1.0e-6
+lr_schedule: constant
+warmup_steps: 0
+optimizer: adamw
+weight_decay: 0.0
+max_grad_norm: 1.0
+num_epochs: 1
+precision: auto
+eval_every: 25
+log_every: 5
+seed: 42

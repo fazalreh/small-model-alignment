@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "small-model-alignment"
+version = "0.1.0"
+description = "From-scratch SFT and DPO (plus TRL LoRA-DPO) for Qwen2.5-0.5B."
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.setuptools]
+packages = ["sma"]

@@ -1,0 +1,24 @@
+{
+  "model_path": "/root/project/outputs/lora_dpo/final",
+  "base_model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+  "generator": "lora_dpo",
+  "eval_path": "eval_sets/persona_style_eval_40.json",
+  "n": 40,
+  "prompt_format": "chat_template",
+  "prompt_example": "<|im_start|>system\nYou are a helpful AI assistant named SmolLM, trained by Hugging Face<|im_end|>\n<|im_start|>user\nI left raw chicken on the counter overnight to thaw. Can I still cook it for dinner tonight?<|im_end|>\n<|im_start|>assistant\n",
+  "stop_token_ids": [
+    2
+  ],
+  "dtype": "bf16",
+  "decoding": {
+    "max_new_tokens": 512,
+    "do_sample": false,
+    "temperature": null,
+    "top_p": null,
+    "repetition_penalty": 1.1,
+    "no_repeat_ngram_size": 0
+  },
+  "mean_new_tokens": 242.825,
+  "frac_hit_max_new_tokens": 0.05,
+  "elapsed_s": 16.541589498519897
+}

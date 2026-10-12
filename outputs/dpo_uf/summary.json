@@ -1,0 +1,25 @@
+{
+  "best": {
+    "step": 400,
+    "val_loss": 0.4854162826091616,
+    "val_reward_accuracy": 0.775,
+    "val_reward_margin": 1.0415346936378629,
+    "val_chosen_reward": -0.14976546571752988,
+    "val_rejected_reward": -1.1913001557607203,
+    "val_policy_chosen_logp": -321.20787918615343,
+    "val_policy_rejected_logp": -288.42093843638895,
+    "val_pairs": 1000
+  },
+  "steps": 469,
+  "elapsed_s": 744.4451148509979,
+  "initial": {
+    "val_loss": 0.6931471824645996,
+    "val_reward_accuracy": 0.0,
+    "val_reward_margin": 0.0,
+    "val_chosen_reward": 0.0,
+    "val_rejected_reward": 0.0,
+    "val_policy_chosen_logp": -319.7102245513201,
+    "val_policy_rejected_logp": -276.5079370933771,
+    "val_pairs": 1000
+  }
+}
