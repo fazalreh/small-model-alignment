@@ -61,19 +61,28 @@ modal volume get sma-outputs data/data_stats.json outputs/data/
 
 ## Judge on Kaggle (Task 7)
 
-1. Upload `outputs/eval/*_pairs.jsonl` as a Kaggle dataset.
-2. Open `notebooks/kaggle_judge.ipynb` as a Kaggle benchmark notebook with model access, and attach the dataset.
-3. Set `REPO_URL` and run all cells.
+1. Create a private Kaggle dataset containing `outputs/eval/*_pairs.jsonl` and `scripts/judge_pairwise_kaggle.py`.
+2. Create a benchmark-task notebook at https://www.kaggle.com/benchmarks/tasks/new (this gives `kaggle_benchmarks`
+   model-proxy access), attach the dataset, and run the cells of `notebooks/kaggle_judge.ipynb`. These are the exact
+   cells used for the submitted results.
+3. Download `/kaggle/working/judged.zip` and unzip it into `outputs/judged/`.
 
-The judge sends 5 pairs per request, sleeps 5 s between attempts, and retries up to 3 times. It checkpoints after
-every batch, logs failures to `*_failures.jsonl`, and resumes with `--reuse_judgments`. `--swap` judges both A/B
-orders; a verdict counts only when both orders agree, otherwise it is a tie. Download `judged.zip` into
-`outputs/judged/`, then build the report assets:
+The judge sends 5 pairs per request, sleeps at least 5 s between attempts, and retries up to 3 times. It
+checkpoints after every batch, logs failures to `*_failures.jsonl`, keeps raw replies in `*_raw.jsonl`, and resumes
+with `--reuse_judgments`. `--swap` judges both A/B orders; a verdict counts only when both orders agree, otherwise
+the pair is a tie. Pair ids, model names and metadata never reach the judge prompt.
+
+## Build the report
 
 ```bash
 python scripts/plot_training.py --outputs outputs --fig_dir report/figures
 python scripts/make_report_tables.py --judged_dir outputs/judged --outputs outputs --out report/results.md
+python scripts/fill_report_results.py --judged_dir outputs/judged --repo https://github.com/<you>/small-model-alignment
+modal run modal_app.py --stage report      # compiles report/report.tex in a TeX Live container
+modal volume get sma-outputs report/report.pdf report/report.pdf --force
 ```
+
+With a local LaTeX install, `cd report && latexmk -pdf report.tex` works too.
 
 ## Key design choices
 

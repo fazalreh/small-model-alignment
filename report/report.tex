@@ -145,8 +145,19 @@ Wall-clock & 6.0 min & 7.3 min (each run) & 12.4 min & $\sim$1 min \\
 \textbf{Decoding (identical within every comparison).} Greedy (\code{do\_sample=False}, so temperature and top-$p$ are
 unused), \code{max\_new\_tokens}$=$512, \code{repetition\_penalty}$=$1.1, no $n$-gram blocking, bf16, left-padded
 batches. The Qwen models use the ChatML template above; the SmolLM2 models use their own chat template.
+Before each full run we inspected 5 sanity-check generations per model (checkpoint path, template, EOS stopping, length).
 \textbf{Judge.} \JudgeModel{} at temperature 0, 5 pairs per request, $\ge$5\,s between attempts,
-$\le$3 retries, both A/B orders.
+$\le$3 retries, both A/B orders. Twelve pair files were judged by 4 concurrent workers, one file each at a time,
+each sleeping $\ge$5\,s between its own requests (about 0.2 requests/s in total).
+
+\textbf{LoRA configuration (Task 5).} SmolLM2-360M is a Llama-style decoder, so we adapt \emph{all} linear projections
+(attention q,k,v,o and MLP gate/up/down). A persona changes word choice and phrasing, which the MLP blocks largely store, so
+attention-only adapters (the original LoRA default) would limit what DPO can move; we did not ablate this choice. Rank 16 with $\alpha{=}32$
+(scale 2) adds 8.68M parameters (2.34\%). That is plenty for a stylistic shift learned from 198 pairs, while the frozen
+base keeps the model's knowledge. Dropout 0.05 regularizes against memorizing the tiny dataset. With 198 pairs, a
+micro-batch of 4 with 2-step accumulation (effective 8) gives 25 updates per epoch. LoRA tolerates a larger learning
+rate than full fine-tuning, so the epochs and LR were set by the sweep in \S\ref{sec:lora}. The reference is the base
+model with the adapter disabled (no second model copy).
 
 %=====================================================================
 \section{Parameter choices and deviations}
@@ -275,6 +286,7 @@ failures and excluded from the rates.
 \caption{Main results (candidate vs.\ SFT). CI: bootstrap 95\% interval of the ties-as-half score.}
 \label{tab:main}
 \setlength{\tabcolsep}{4pt}
+\resizebox{\linewidth}{!}{%
 \begin{tabular}{@{}l c ccc cc c c c@{}}
 \toprule
 Comparison (set) & $n$ & W & T & L & win & win excl.\ T & ties$=\tfrac12$ (95\% CI) & fail/unk. & pos.\ consist. \\
@@ -289,7 +301,7 @@ HH-DPO $3\!\times\!10^{-6}$ vs SFT (AlpacaEval) & 300 & \RowHHthreeA \\
 UF-DPO vs SFT (HH-eval) & 300 & \RowUFH \\
 SFT vs base (AlpacaEval) & 300 & \RowSFTA \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 \textbf{Response length (measured, no judge).} Mean generated tokens, with the fraction hitting the 512-token cap in parentheses:
@@ -348,8 +360,9 @@ outputs unchanged; too much triggers likelihood collapse and repetition (Table~\
 order swapping and the explicit anti-length instruction. The persona evaluation set (40) and its validation split (22) are small.
 \item Greedy bf16 decoding in length-sorted batches can produce small batch-composition effects. Settings are identical
 across the models in each comparison.
-\item \textbf{Reproduce:} \code{modal run modal\_app.py} (or \code{notebooks/kaggle\_t4\_pipeline.ipynb}), then
-\code{notebooks/kaggle\_judge.ipynb}. Key artifacts:
+\item \textbf{Reproduce:} train and generate with \code{modal run modal\_app.py} (or the Kaggle T4 notebook
+\code{notebooks/}\allowbreak\code{kaggle\_t4\_pipeline.ipynb}); judge with \code{notebooks/}\allowbreak\code{kaggle\_judge.ipynb};
+fill the report with \code{scripts/}\allowbreak\code{fill\_report\_results.py}. Key artifacts:
 \end{itemize}
 \begin{center}\footnotesize
 \begin{tabular}{@{}ll@{}}

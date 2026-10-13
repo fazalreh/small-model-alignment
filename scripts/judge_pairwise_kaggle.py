@@ -201,7 +201,7 @@ def parse_reply(text: str, n_items: int, criteria: list[str]) -> dict[int, dict]
 
 
 class KaggleJudge:
-    def __init__(self, model_name: str):
+    def __init__(self, model_name: str, reasoning: str | None = None):
         import kaggle_benchmarks as kbench
 
         self.kbench = kbench
@@ -214,14 +214,25 @@ class KaggleJudge:
                 available = "unknown"
             raise SystemExit(f"judge model {model_name!r} unavailable ({exc}); available: {available}")
         self.counter = 0
+        # Gemini "thinking" tokens dominate the cost of a judge call; a short JSON verdict does not need them.
+        self.reasoning = None if reasoning in (None, "", "default") else reasoning
+
+    def _prompt(self, prompt: str) -> str:
+        if self.reasoning is not None:
+            try:
+                return self.llm.prompt(prompt, temperature=0, reasoning=self.reasoning)
+            except (TypeError, ValueError) as exc:  # model or SDK without reasoning control
+                print(f"[judge] reasoning={self.reasoning!r} not supported ({exc}); using model default")
+                self.reasoning = None
+        return self.llm.prompt(prompt, temperature=0)
 
     def __call__(self, prompt: str) -> str:
         self.counter += 1
         chats = getattr(self.kbench, "chats", None)
         if chats is not None and hasattr(chats, "new"):
             with chats.new(f"pairwise-judge-{self.counter}"):  # isolated history per request
-                return self.llm.prompt(prompt, temperature=0)
-        return self.llm.prompt(prompt, temperature=0)
+                return self._prompt(prompt)
+        return self._prompt(prompt)
 
 
 class MockJudge:
@@ -292,7 +303,7 @@ def judge(args) -> None:
         groups[item[0]["rubric"]].append(item)
     print(f"[judge] {len(pairs)} pairs x {len(orders)} order(s); {len(done)} done, {len(todo)} to judge")
 
-    backend = MockJudge() if args.backend == "mock" else KaggleJudge(args.judge_model)
+    backend = MockJudge() if args.backend == "mock" else KaggleJudge(args.judge_model, args.reasoning)
     failure_path = args.failure_path or sibling(args.output_path, "_failures.jsonl")
     raw_path = sibling(args.output_path, "_raw.jsonl")
     first_request = True
@@ -317,6 +328,12 @@ def judge(args) -> None:
                 except Exception as exc:  # proxy denial, timeout, quota ...
                     last_error = f"{type(exc).__name__}: {exc}"
                     print(f"[judge] batch {b_start // args.batch_size} attempt {attempts} failed: {last_error}")
+                    if re.search(r"quota|exhausted|budget|429", last_error, flags=re.I):
+                        # Out of daily model quota: stop instead of burning retries. Everything judged so far is
+                        # already on disk, and a later run with --reuse_judgments continues from here.
+                        print("[judge] model quota exhausted; stopping early (resume later with --reuse_judgments)")
+                        summarize(args)
+                        raise SystemExit(3)
                     continue
                 append_jsonl([{"time": time.time(), "pair_ids": [p["pair_id"] for p, _ in pending],
                                "orders": [o for _, o in pending], "attempt": attempts, "reply": str(reply)}], raw_path)
@@ -521,7 +538,12 @@ def main(argv=None):
     p.add_argument("--backend", default="kaggle", choices=["kaggle", "mock"])
     p.add_argument("--limit", type=int, default=0)
     p.add_argument("--summarize_only", action="store_true")
+    p.add_argument("--reasoning", default="none",
+                   help="judge reasoning effort passed to kaggle_benchmarks (none|low|medium|high|default)")
+    p.add_argument("--max_response_chars", type=int, default=MAX_RESPONSE_CHARS,
+                   help="responses longer than this are clipped (with a marker) in the judge prompt")
     args = p.parse_args(argv)
+    globals()["MAX_RESPONSE_CHARS"] = args.max_response_chars
     if args.sleep_seconds < 5 and args.backend == "kaggle":
         print("[judge] raising --sleep_seconds to 5 (assignment minimum)")
         args.sleep_seconds = 5.0
