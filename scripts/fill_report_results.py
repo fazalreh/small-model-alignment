@@ -146,10 +146,10 @@ def interpretation(found) -> str:
             parts.append(rf"{label}: style {pct(st['win_rate_ties_half'], 0)}, quality {pct(qu['win_rate_ties_half'], 0)}")
             if qu["win_rate_ties_half_ci95"][1] >= 0.5:  # no significant quality loss vs. the base model
                 eligible.append((st["win_rate_ties_half"] or 0.0, label))
-        rule = (rf"Selection rule (fixed before judging): highest style score among runs with no significant quality loss "
-                rf"(quality CI reaches 50\%) $\Rightarrow$ {max(eligible)[1]}." if eligible else
-                r"Every run loses significantly on quality, so we report the trade-off instead of selecting a run.")
-        items.append(r"\item \textbf{Persona vs.\ SmolLM2-Instruct (ties = 1/2):} " + "; ".join(parts) + ". " + rule)
+        rule = (rf"highest judged style among runs with no significant quality loss (quality CI reaches 50\%) "
+                rf"$\Rightarrow$ {max(eligible)[1]} (scores in Table~\ref{{tab:lora}})." if eligible else
+                r"every run loses significantly on quality, so no run is selected (Table~\ref{tab:lora}).")
+        items.append(r"\item \textbf{Persona selection (rule fixed before judging):} " + rule)
     return "\\begin{itemize}\n" + "\n".join(items) + "\n\\end{itemize}\n" if items else ""
 
 

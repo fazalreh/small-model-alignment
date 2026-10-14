@@ -1,5 +1,5 @@
 \documentclass[10pt]{article}
-\usepackage[a4paper,margin=0.85in]{geometry}
+\usepackage[a4paper,margin=0.72in]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{microtype}
@@ -78,7 +78,9 @@ the length-neutral judge does not reward. LoRA-DPO shows a clean style--quality 
 \code{sma/core.py}, and \code{submission\_adapter.py} wraps it for the private grader. The loops are
 \code{sma/train\_sft.py} and \code{sma/train\_dpo.py}; neither uses HF \code{Trainer} or TRL. The 7 public tests and 15 additional
 edge-case tests pass (truncation that removes EOS, \code{pad\_token\_id}$=$\code{eos\_token\_id}, missing pad/EOS
-tokens, row order, brute-force log-prob checks, gradient-accumulation equivalence).
+tokens, row order, brute-force log-prob checks, gradient-accumulation equivalence). We build on DPO~\cite{dpo}, LoRA~\cite{lora}, Qwen2.5~\cite{qwen}, SmolLM2~\cite{smol}, UltraChat~\cite{uc}, HH-RLHF~\cite{hh},
+UltraFeedback~\cite{uf}, AlpacaEval~\cite{ae,lc}, and the MT-Bench pairwise-judging protocol~\cite{mt}; the overall pipeline follows~\cite{ig}.
+Software (logged in each \code{run\_config.json}): torch 2.6.0 (CUDA 12.4), transformers 4.51.3, datasets 3.6.0, TRL 0.19.1, PEFT 0.15.2.
 
 \textbf{Prompt format.} The same template is used for SFT, both DPO runs, and evaluation: Qwen ChatML with the system message
 ``You are a helpful assistant.'' (\code{sma/prompts.py}). The response is followed by the tokenizer EOS
@@ -146,7 +148,7 @@ Wall-clock & 6.0 min & 7.3 min (each run) & 12.4 min & $\sim$1 min \\
 \end{table}
 
 \textbf{Decoding (identical within every comparison).} Greedy (\code{do\_sample=False}, so temperature and top-$p$ are
-unused), \code{max\_new\_tokens}$=$512, \code{repetition\_penalty}$=$1.1, no $n$-gram blocking, bf16, left-padded
+unused), \code{max\_new\_tokens}$=$512, \code{repetition\_penalty}$=$1.1, no length penalty, no $n$-gram blocking, bf16, left-padded
 batches. The Qwen models use the ChatML template above; the SmolLM2 models use their own chat template.
 Before each full run we inspected 5 sanity-check generations per model (checkpoint path, template, EOS stopping, length).
 \textbf{Judge.} \JudgeModel{} at temperature 0, 5 pairs per request, $\ge$5\,s between attempts,
@@ -187,8 +189,9 @@ DPO optimizer & RMSprop/AdamW & AdamW & D & RMSprop has no bias correction: its 
 Reference model & fp16, 2nd GPU & FP32 + same autocast & D & Policy and reference are bit-identical at step 0: we measured loss $=0.6931=\log 2$ and accuracy $=0$, margin $=0$ on both tracks, so diagnostics measure learning rather than precision noise. \\
 SFT length filter & --- & fit in 512 & P & Every target ends in EOS. SFT outputs: 0\% truncated on the sanity set vs.\ 65.3\% for the base model on AlpacaEval. \\
 UF pair filter & --- & margin $\ge1$ & P & Removes ties and near-ties (30\% of pairs), which carry little preference signal. \\
-HH-DPO LR & $10^{-6}$ & $3\!\times\!10^{-6}$ & P & At $10^{-6}$ the model still complies with 100\% of harmful/cyber/doxxing prompts (Table~\ref{tab:hhsweep}). Of $\{1,3,10\}\!\times\!10^{-6}$ we select by validation reward accuracy, not by judge results. The guide run is still reported. \\
+HH-DPO LR & $10^{-6}$ & $3\!\times\!10^{-6}$ & P & At $10^{-6}$ no refusal or redirection was detected on harmful, cyber or doxxing prompts (keyword check, Table~\ref{tab:hhsweep}). Of $\{1,3,10\}\!\times\!10^{-6}$ we select by validation reward accuracy, not by judge results. The guide run is still reported. \\
 LoRA LR / epochs & --- & 3-point sweep & P & The first run ($5\!\times\!10^{-5}$) saturated validation accuracy but barely changed greedy outputs, so we swept LR and epochs and compared runs by judged style \emph{and} quality (\S\ref{sec:lora}). \\
+Judge calls & sequential & 6 workers, thinking off, clip 4k chars & R & The free daily model quota was exhausted by default-thinking calls. Turning thinking off cut the cost to \$2.83 for all 7 main files; each worker still sleeps $\ge$5\,s between its own requests. \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -198,7 +201,7 @@ LoRA LR / epochs & --- & 3-point sweep & P & The first run ($5\!\times\!10^{-5}$
 %=====================================================================
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.62\linewidth]{figures/sft_loss.png}
+\includegraphics[width=0.5\linewidth]{figures/sft_loss.png}
 \caption{SFT response-token NLL. Train loss per 10-step window (raw and EMA 0.9); validation on 1{,}000 held-out
 examples every 100 steps. The dashed line marks the selected checkpoint (step 900).}
 \label{fig:sft}
@@ -211,7 +214,7 @@ turn format and when to stop.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=\linewidth]{figures/dpo_curves.png}
+\includegraphics[width=0.95\linewidth]{figures/dpo_curves.png}
 \caption{From-scratch DPO. Left: train loss (EMA 0.9) and validation loss (dotted line: $\log 2$). Middle: validation
 reward accuracy. Right: validation margin and implicit rewards $r_w$ (dotted), $r_l$ (dashed). Vertical lines mark the
 selected checkpoints (step 400 for both runs). Evaluation every 25 steps on 1{,}000 pairs.}
@@ -264,7 +267,7 @@ $10^{-5}$ & 0.649 & 0.723 & 0.695 & $-138.4$ & 405 (69\%) & 90\% & 100\% & 90\% 
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.85\linewidth]{figures/dpo_hh_sweep.png}
+\includegraphics[width=0.68\linewidth]{figures/dpo_hh_sweep.png}
 \caption{HH-DPO LR sweep: validation reward accuracy (left) and margin (right), evaluated every 25 steps.}
 \label{fig:hhsweep}
 \end{figure}
@@ -277,7 +280,7 @@ collapses ($-174\to-195$) and the margin saturates at 10.3, a textbook sign of o
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.9\linewidth]{figures/lora_sweep.png}
+\includegraphics[width=0.72\linewidth]{figures/lora_sweep.png}
 \caption{LoRA-DPO sweep on SmolLM2-360M-Instruct. Left: validation margin. Right: summed validation log-probabilities of the chosen
 (solid) and rejected (dashed) responses.}
 \label{fig:lora}
@@ -288,8 +291,9 @@ collapses ($-174\to-195$) and the margin saturates at 10.3, a textbook sign of o
 %=====================================================================
 Every comparison uses the same prompts, the same decoding settings, and the same judge procedure. The judge sees only the prompt, the
 per-prompt guidance (HH set), and ``Response A/B''. Each pair is judged in both orders; a win counts only if both orders
-agree, otherwise the pair is a tie (MT-Bench convention). Unresolved items after 3 retries are reported as
-failures and excluded from the rates.
+agree, otherwise the pair is a tie (MT-Bench convention). Unresolved items after 3 retries would count as
+failures and be excluded from the rates, and labels outside \{A, B, tie\} as unknown. In practice, all 4{,}440 judged items (10 files)
+parsed on the first attempt: 0 retries, 0 failures, 0 unknown.
 
 \begin{table}[!htbp]
 \centering\small
@@ -441,13 +445,19 @@ Judgments & \code{outputs/judged/<comparison>\_judged\{,\_failures,\_summary,\_f
 \end{tabular}
 \end{center}
 
-\small
-\begin{thebibliography}{9}\setlength{\itemsep}{0pt}
+\footnotesize
+\begin{thebibliography}{99}\setlength{\itemsep}{0pt}
 \bibitem{dpo} R.~Rafailov et al. Direct Preference Optimization: Your Language Model is Secretly a Reward Model. NeurIPS 2023.
 \bibitem{ig} L.~Ouyang et al. Training language models to follow instructions with human feedback. NeurIPS 2022.
-\bibitem{hh} Y.~Bai et al. Training a Helpful and Harmless Assistant with RLHF. 2022.
-\bibitem{lc} Y.~Dubois et al. Length-Controlled AlpacaEval. 2024.
+\bibitem{hh} Y.~Bai et al. Training a Helpful and Harmless Assistant with Reinforcement Learning from Human Feedback. arXiv 2204.05862, 2022.
+\bibitem{uc} N.~Ding et al. Enhancing Chat Language Models by Scaling High-quality Instructional Conversations (UltraChat). EMNLP 2023.
+\bibitem{uf} G.~Cui et al. UltraFeedback: Boosting Language Models with Scaled AI Feedback. ICML 2024.
+\bibitem{ae} X.~Li et al. AlpacaEval: An Automatic Evaluator of Instruction-following Models. GitHub, 2023.
+\bibitem{lc} Y.~Dubois et al. Length-Controlled AlpacaEval: A Simple Way to Debias Automatic Evaluators. 2024.
 \bibitem{mt} L.~Zheng et al. Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena. NeurIPS 2023.
+\bibitem{lora} E.~Hu et al. LoRA: Low-Rank Adaptation of Large Language Models. ICLR 2022.
+\bibitem{qwen} Qwen Team. Qwen2.5 Technical Report. arXiv 2412.15115, 2024.
+\bibitem{smol} L.~B.~Allal et al. SmolLM2: When Smol Goes Big. arXiv 2502.02737, 2025.
 \bibitem{hf} Hugging Face Transformers, TRL, and PEFT documentation; Kaggle Benchmarks documentation.
 \end{thebibliography}
 \end{document}

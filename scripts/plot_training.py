@@ -80,6 +80,9 @@ def plot_dpo(runs: dict, fig_dir: Path, smooth: float):
     axes[0].set_title("DPO loss (dotted: log 2)")
     axes[1].set_title("validation reward accuracy (r_w > r_l)")
     axes[2].set_title("validation implicit rewards")
+    axes[0].set_ylabel("DPO loss (pair mean)")
+    axes[1].set_ylabel("reward accuracy (fraction of pairs)")
+    axes[2].set_ylabel(r"reward  $\beta\,(\log\pi_\theta-\log\pi_{ref})$")
     for ax in axes:
         ax.set_xlabel("optimizer step (32 pairs / step)")
         ax.grid(alpha=0.3)
@@ -103,6 +106,8 @@ def plot_lora(run_dir: Path, fig_dir: Path):
         axes[1].plot([h["step"] for h in ev], [h[key] for h in ev], "o-", label="val reward acc")
         axes[1].plot([h["step"] for h in ev], [h["eval_rewards/margins"] for h in ev], "s-", label="val margin")
     axes[1].set_title("LoRA-DPO preference diagnostics")
+    axes[0].set_ylabel("DPO loss")
+    axes[1].set_ylabel("accuracy / margin")
     for ax in axes:
         ax.set_xlabel("optimizer step")
         ax.grid(alpha=0.3)
@@ -125,6 +130,8 @@ def plot_dpo_sweep(runs: dict, fig_dir: Path, name: str, title: str):
     axes[0].set_title(f"{title}: validation reward accuracy")
     axes[1].set_title(f"{title}: validation reward margin")
     axes[0].set_ylim(0.5, None)
+    axes[0].set_ylabel("reward accuracy (fraction of pairs)")
+    axes[1].set_ylabel(r"mean margin $r_w - r_l$")
     for ax in axes:
         ax.set_xlabel("optimizer step (32 pairs / step)")
         ax.grid(alpha=0.3)
@@ -149,6 +156,8 @@ def plot_lora_sweep(runs: dict, fig_dir: Path):
         table[label] = ev[-1]
     axes[0].set_title("LoRA-DPO validation reward margin")
     axes[1].set_title("validation log p (summed over response)")
+    axes[0].set_ylabel(r"mean margin $r_w - r_l$")
+    axes[1].set_ylabel("summed response log-prob (nats)")
     for ax in axes:
         ax.set_xlabel("optimizer step")
         ax.grid(alpha=0.3)
