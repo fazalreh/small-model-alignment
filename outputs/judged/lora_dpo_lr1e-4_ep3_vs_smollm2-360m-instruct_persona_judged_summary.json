@@ -1,0 +1,217 @@
+{
+  "pairs_path": "/kaggle/input/datasets/fazalrehman03/pa2-judge-pairs/lora_dpo_lr1e-4_ep3_vs_smollm2-360m-instruct_persona_pairs.jsonl",
+  "comparison": "lora_dpo_lr1e-4_ep3_vs_smollm2-360m-instruct_persona",
+  "candidate": "lora_dpo_lr1e-4_ep3",
+  "baseline": "smollm2-360m-instruct",
+  "judge_model": "google/gemini-3.6-flash",
+  "rubric": "persona",
+  "orders_judged": [
+    "original",
+    "swapped"
+  ],
+  "tie_rule": "with both orders, a verdict counts only if both orders agree; otherwise tie",
+  "n_pairs": 40,
+  "judge_calls_items_ok": 80,
+  "items_needing_retry": 0,
+  "unresolved_items": 0,
+  "mean_chars_candidate": 767.775,
+  "mean_chars_baseline": 1042.95,
+  "criteria": {
+    "style_winner": {
+      "n": 40,
+      "wins": 28,
+      "losses": 0,
+      "ties": 12,
+      "unknown": 0,
+      "failures": 0,
+      "win_rate": 0.7,
+      "win_rate_excl_ties": 1.0,
+      "win_rate_ties_half": 0.85,
+      "win_rate_ties_half_ci95": [
+        0.775,
+        0.9125
+      ],
+      "loss_rate": 0.0,
+      "tie_rate": 0.3,
+      "unknown_rate": 0.0,
+      "failure_rate": 0.0,
+      "position_consistency": 0.925,
+      "per_category": {
+        "coding": {
+          "n": 10,
+          "wins": 9,
+          "losses": 0,
+          "ties": 1,
+          "unknown": 0,
+          "failures": 0,
+          "win_rate": 0.9,
+          "win_rate_excl_ties": 1.0,
+          "win_rate_ties_half": 0.95,
+          "win_rate_ties_half_ci95": [
+            0.85,
+            1.0
+          ],
+          "loss_rate": 0.0,
+          "tie_rate": 0.1,
+          "unknown_rate": 0.0,
+          "failure_rate": 0.0
+        },
+        "cooking": {
+          "n": 10,
+          "wins": 7,
+          "losses": 0,
+          "ties": 3,
+          "unknown": 0,
+          "failures": 0,
+          "win_rate": 0.7,
+          "win_rate_excl_ties": 1.0,
+          "win_rate_ties_half": 0.85,
+          "win_rate_ties_half_ci95": [
+            0.7,
+            1.0
+          ],
+          "loss_rate": 0.0,
+          "tie_rate": 0.3,
+          "unknown_rate": 0.0,
+          "failure_rate": 0.0
+        },
+        "general_help": {
+          "n": 10,
+          "wins": 7,
+          "losses": 0,
+          "ties": 3,
+          "unknown": 0,
+          "failures": 0,
+          "win_rate": 0.7,
+          "win_rate_excl_ties": 1.0,
+          "win_rate_ties_half": 0.85,
+          "win_rate_ties_half_ci95": [
+            0.7,
+            1.0
+          ],
+          "loss_rate": 0.0,
+          "tie_rate": 0.3,
+          "unknown_rate": 0.0,
+          "failure_rate": 0.0
+        },
+        "safety_sensitive": {
+          "n": 10,
+          "wins": 5,
+          "losses": 0,
+          "ties": 5,
+          "unknown": 0,
+          "failures": 0,
+          "win_rate": 0.5,
+          "win_rate_excl_ties": 1.0,
+          "win_rate_ties_half": 0.75,
+          "win_rate_ties_half_ci95": [
+            0.6,
+            0.9
+          ],
+          "loss_rate": 0.0,
+          "tie_rate": 0.5,
+          "unknown_rate": 0.0,
+          "failure_rate": 0.0
+        }
+      }
+    },
+    "quality_winner": {
+      "n": 40,
+      "wins": 5,
+      "losses": 26,
+      "ties": 9,
+      "unknown": 0,
+      "failures": 0,
+      "win_rate": 0.125,
+      "win_rate_excl_ties": 0.16129032258064516,
+      "win_rate_ties_half": 0.2375,
+      "win_rate_ties_half_ci95": [
+        0.1375,
+        0.35
+      ],
+      "loss_rate": 0.65,
+      "tie_rate": 0.225,
+      "unknown_rate": 0.0,
+      "failure_rate": 0.0,
+      "position_consistency": 0.775,
+      "per_category": {
+        "coding": {
+          "n": 10,
+          "wins": 2,
+          "losses": 5,
+          "ties": 3,
+          "unknown": 0,
+          "failures": 0,
+          "win_rate": 0.2,
+          "win_rate_excl_ties": 0.2857142857142857,
+          "win_rate_ties_half": 0.35,
+          "win_rate_ties_half_ci95": [
+            0.1,
+            0.6
+          ],
+          "loss_rate": 0.5,
+          "tie_rate": 0.3,
+          "unknown_rate": 0.0,
+          "failure_rate": 0.0
+        },
+        "cooking": {
+          "n": 10,
+          "wins": 2,
+          "losses": 6,
+          "ties": 2,
+          "unknown": 0,
+          "failures": 0,
+          "win_rate": 0.2,
+          "win_rate_excl_ties": 0.25,
+          "win_rate_ties_half": 0.3,
+          "win_rate_ties_half_ci95": [
+            0.05,
+            0.55
+          ],
+          "loss_rate": 0.6,
+          "tie_rate": 0.2,
+          "unknown_rate": 0.0,
+          "failure_rate": 0.0
+        },
+        "general_help": {
+          "n": 10,
+          "wins": 0,
+          "losses": 7,
+          "ties": 3,
+          "unknown": 0,
+          "failures": 0,
+          "win_rate": 0.0,
+          "win_rate_excl_ties": 0.0,
+          "win_rate_ties_half": 0.15,
+          "win_rate_ties_half_ci95": [
+            0.05,
+            0.3
+          ],
+          "loss_rate": 0.7,
+          "tie_rate": 0.3,
+          "unknown_rate": 0.0,
+          "failure_rate": 0.0
+        },
+        "safety_sensitive": {
+          "n": 10,
+          "wins": 1,
+          "losses": 8,
+          "ties": 1,
+          "unknown": 0,
+          "failures": 0,
+          "win_rate": 0.1,
+          "win_rate_excl_ties": 0.1111111111111111,
+          "win_rate_ties_half": 0.15,
+          "win_rate_ties_half_ci95": [
+            0.0,
+            0.4
+          ],
+          "loss_rate": 0.8,
+          "tie_rate": 0.1,
+          "unknown_rate": 0.0,
+          "failure_rate": 0.0
+        }
+      }
+    }
+  }
+}

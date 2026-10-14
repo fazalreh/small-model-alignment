@@ -1,0 +1,138 @@
+{
+  "pairs_path": "/kaggle/input/datasets/fazalrehman03/pa2-judge-pairs/dpo_uf_vs_sft_alpaca_pairs.jsonl",
+  "comparison": "dpo_uf_vs_sft_alpaca",
+  "candidate": "dpo_uf",
+  "baseline": "sft",
+  "judge_model": "google/gemini-3.6-flash",
+  "rubric": "general",
+  "orders_judged": [
+    "original",
+    "swapped"
+  ],
+  "tie_rule": "with both orders, a verdict counts only if both orders agree; otherwise tie",
+  "n_pairs": 300,
+  "judge_calls_items_ok": 600,
+  "items_needing_retry": 0,
+  "unresolved_items": 0,
+  "mean_chars_candidate": 1391.3666666666666,
+  "mean_chars_baseline": 859.5833333333334,
+  "criteria": {
+    "winner": {
+      "n": 300,
+      "wins": 95,
+      "losses": 82,
+      "ties": 123,
+      "unknown": 0,
+      "failures": 0,
+      "win_rate": 0.31666666666666665,
+      "win_rate_excl_ties": 0.536723163841808,
+      "win_rate_ties_half": 0.5216666666666666,
+      "win_rate_ties_half_ci95": [
+        0.48,
+        0.5666666666666667
+      ],
+      "loss_rate": 0.2733333333333333,
+      "tie_rate": 0.41,
+      "unknown_rate": 0.0,
+      "failure_rate": 0.0,
+      "position_consistency": 0.61,
+      "per_category": {
+        "helpful_base": {
+          "n": 51,
+          "wins": 13,
+          "losses": 15,
+          "ties": 23,
+          "unknown": 0,
+          "failures": 0,
+          "win_rate": 0.2549019607843137,
+          "win_rate_excl_ties": 0.4642857142857143,
+          "win_rate_ties_half": 0.4803921568627451,
+          "win_rate_ties_half_ci95": [
+            0.38235294117647056,
+            0.5784313725490197
+          ],
+          "loss_rate": 0.29411764705882354,
+          "tie_rate": 0.45098039215686275,
+          "unknown_rate": 0.0,
+          "failure_rate": 0.0
+        },
+        "koala": {
+          "n": 60,
+          "wins": 17,
+          "losses": 13,
+          "ties": 30,
+          "unknown": 0,
+          "failures": 0,
+          "win_rate": 0.2833333333333333,
+          "win_rate_excl_ties": 0.5666666666666667,
+          "win_rate_ties_half": 0.5333333333333333,
+          "win_rate_ties_half_ci95": [
+            0.44166666666666665,
+            0.625
+          ],
+          "loss_rate": 0.21666666666666667,
+          "tie_rate": 0.5,
+          "unknown_rate": 0.0,
+          "failure_rate": 0.0
+        },
+        "oasst": {
+          "n": 54,
+          "wins": 19,
+          "losses": 14,
+          "ties": 21,
+          "unknown": 0,
+          "failures": 0,
+          "win_rate": 0.35185185185185186,
+          "win_rate_excl_ties": 0.5757575757575758,
+          "win_rate_ties_half": 0.5462962962962963,
+          "win_rate_ties_half_ci95": [
+            0.4444444444444444,
+            0.6574074074074074
+          ],
+          "loss_rate": 0.25925925925925924,
+          "tie_rate": 0.3888888888888889,
+          "unknown_rate": 0.0,
+          "failure_rate": 0.0
+        },
+        "selfinstruct": {
+          "n": 95,
+          "wins": 31,
+          "losses": 31,
+          "ties": 33,
+          "unknown": 0,
+          "failures": 0,
+          "win_rate": 0.3263157894736842,
+          "win_rate_excl_ties": 0.5,
+          "win_rate_ties_half": 0.5,
+          "win_rate_ties_half_ci95": [
+            0.42105263157894735,
+            0.5789473684210527
+          ],
+          "loss_rate": 0.3263157894736842,
+          "tie_rate": 0.3473684210526316,
+          "unknown_rate": 0.0,
+          "failure_rate": 0.0
+        },
+        "vicuna": {
+          "n": 40,
+          "wins": 15,
+          "losses": 9,
+          "ties": 16,
+          "unknown": 0,
+          "failures": 0,
+          "win_rate": 0.375,
+          "win_rate_excl_ties": 0.625,
+          "win_rate_ties_half": 0.575,
+          "win_rate_ties_half_ci95": [
+            0.45,
+            0.6875
+          ],
+          "loss_rate": 0.225,
+          "tie_rate": 0.4,
+          "unknown_rate": 0.0,
+          "failure_rate": 0.0
+        }
+      }
+    }
+  }
+}

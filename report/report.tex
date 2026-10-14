@@ -66,6 +66,9 @@ SFT lowers held-out response NLL from 1.396 to 1.331 and makes the model stop pr
 refusal behavior, so we sweep $\{1,3,10\}\times10^{-6}$ and select $3\times10^{-6}$ by validation reward accuracy (0.654). It
 raises refusal and redirection on harmful prompts, while $10^{-5}$ over-optimizes into incoherent over-refusal. Judged against SFT,
 UF-DPO scores \ResUFwin{} on AlpacaEval and HH-DPO scores \ResHHwin{} on the helpful/harmless set (ties counted as half).
+HH-DPO's gain comes from refusing actionable harm without over-refusing benign requests. UF-DPO mainly lengthens answers, which
+the length-neutral judge does not reward. LoRA-DPO shows a clean style--quality trade-off: persona win rate 55/85/94\% against quality
+41/24/14\% across the sweep.
 \end{abstract}
 
 %=====================================================================
@@ -136,7 +139,7 @@ Precision & bf16 autocast, FP32 weights & same & same & bf16 \\
 Max len / prompt & 512 / 256 & 512 / 256 & 512 / 256 & 512 / 256 \\
 Epochs (steps) & 1 (938) & 1 (469) & 1 (469) & 3 (75) / 3 (75) / 5 (125) \\
 $\beta$, reference & --- & 0.1, frozen \code{sft/best} & 0.1, frozen \code{sft/best} & 0.1, adapter disabled \\
-Selection & min val loss (step 900) & max val reward acc (step 400) & max val reward acc (step 400) & final adapter; run chosen by judge (\S\ref{sec:lora}) \\
+Selection & min val loss (step 900) & max val reward acc (step 400) & max val reward acc (step 400) & final adapter; run chosen by a pre-registered rule (\S\ref{sec:lora}) \\
 Wall-clock & 6.0 min & 7.3 min (each run) & 12.4 min & $\sim$1 min \\
 \bottomrule
 \end{tabularx}
@@ -147,8 +150,15 @@ unused), \code{max\_new\_tokens}$=$512, \code{repetition\_penalty}$=$1.1, no $n$
 batches. The Qwen models use the ChatML template above; the SmolLM2 models use their own chat template.
 Before each full run we inspected 5 sanity-check generations per model (checkpoint path, template, EOS stopping, length).
 \textbf{Judge.} \JudgeModel{} at temperature 0, 5 pairs per request, $\ge$5\,s between attempts,
-$\le$3 retries, both A/B orders. Twelve pair files were judged by 4 concurrent workers, one file each at a time,
-each sleeping $\ge$5\,s between its own requests (about 0.2 requests/s in total).
+$\le$3 retries, both A/B orders. The 7 general/safety comparisons were judged in one Kaggle batch run by 6 concurrent workers (one
+pair file each, each sleeping $\ge$5\,s between its own requests), with Gemini's thinking disabled
+(\code{reasoning="none"}) and responses clipped at 4{,}000 characters. This took 30\,min and \$2.83 of the free daily quota, with
+0 failures and 0 unknown verdicts. The first persona judging used the same settings, but its \emph{style} verdicts were
+unusable: 39/40 ties, and position consistency as low as 0.43, even when the judge's own reason said one answer ``fails the
+persona''. We therefore re-judged only the 3 persona files with \code{reasoning="low"} and a sharpened style rubric (tone
+judged independently of quality; ``tie'' only for equal style). The discarded run is kept in
+\code{outputs/judged/persona\_reasoning\_none/}. Earlier interactive attempts that were cut off by session time-outs left no results
+and are not reported.
 
 \textbf{LoRA configuration (Task 5).} SmolLM2-360M is a Llama-style decoder, so we adapt \emph{all} linear projections
 (attention q,k,v,o and MLP gate/up/down). A persona changes word choice and phrasing, which the MLP blocks largely store, so
@@ -335,6 +345,24 @@ lr $2\!\times\!10^{-4}$, 5 ep & 10.29 & $-195.3$ / $-250.1$ & 409 (70\%) & \RowL
 \end{tabular}
 \end{table}
 
+\textbf{Judge-free style check.} Measured on the same 40 generations (\code{scripts/persona\_style\_metrics.py}): the persona-marker
+rate is the fraction of answers containing at least one chef-persona marker (exasperated exclamations or kitchen insults); rep-4g is the fraction of
+repeated 4-grams within an answer.
+\begin{center}\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Model & persona-marker rate & ``!'' per 100 words & rep-4g & hit 512-token cap \\
+\midrule
+SmolLM2-Instruct (base) & 0\% & 0.25 & 0.016 & 0\% \\
+LoRA $5\!\times\!10^{-5}$, 3 ep & 5\% & 0.78 & 0.014 & 5\% \\
+LoRA $10^{-4}$, 3 ep & 55\% & 7.05 & 0.041 & 8\% \\
+LoRA $2\!\times\!10^{-4}$, 5 ep & 22\% & 16.86 & 0.544 & 70\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+These numbers agree with the judge's style ranking. The $2\!\times\!10^{-4}$ run's lower marker rate reflects loops of a few
+repeated phrases (54\% of its 4-grams repeat), not weaker persona.
+
 \textbf{Qualitative (raw-chicken prompt).} The base model and the $5\!\times\!10^{-5}$ run both say the chicken can still be cooked
 (unsafe), the latter with only mild flavor (``Hmmm\ldots''). The $10^{-4}$ run is in persona \emph{and} correct (``You can't even THINK about
 cooking that raw chicken \ldots\ put it in the fridge \ldots\ you'll get sick!''). The $2\!\times\!10^{-4}$ run degenerates into loops
@@ -345,28 +373,63 @@ cooking that raw chicken \ldots\ put it in the fridge \ldots\ you'll get sick!''
 %=====================================================================
 \IfFileExists{auto_interpretation.tex}{\input{auto_interpretation.tex}}{%
 \res{Pending Kaggle judging: run \code{notebooks/kaggle\_judge.ipynb}, then \code{scripts/fill\_report\_results.py}.}}
+
+\textbf{Interpretation.} The bullets above are measurements; what follows is our reading of them.
 \begin{itemize}
-\item \textbf{Observed in sanity checks:} SFT produces fluent but sometimes hallucinated content (e.g.\ listing living bear
-species, and even tigers, as ``extinct'' bears), which DPO on 15k pairs is unlikely to fix.
-\item \textbf{Persona:} style strength is controlled by the effective KL budget (LR $\times$ steps at fixed $\beta$). Too little leaves greedy
-outputs unchanged; too much triggers likelihood collapse and repetition (Table~\ref{tab:lora}, Fig.~\ref{fig:lora}).
+\item \textbf{HH-DPO works, and the gain is where HH supervises.} The selected run wins clearly overall, and almost all of the gain comes
+from refusing actionable harm (harmful instructions, cyber abuse, privacy, hate, legal/financial: 80--92\%). Benign
+helpfulness stays near parity, so the model does not over-refuse. The weak spot is self-harm support (37\%): HH ``chosen''
+replies are short, DPO shortened answers further (137 vs.\ 177 tokens on HH-eval), and terse replies read as less supportive in a
+crisis. Even the guide run ($10^{-6}$), whose refusal rate barely moved (Table~\ref{tab:hhsweep}), wins 65\%. The judge rewards its
+milder, less detailed answers to harmful requests.
+\item \textbf{More KL budget is not better.} At $10^{-5}$ the model refuses almost everything: it wins 93\% of harmful-instruction
+prompts but only 10\% of benign and 8\% of safe-transformation prompts, for 47\% overall. That matches its likelihood collapse
+($\log\pi(y_w)$ falls by 19 nats) and the 69\% of answers that hit the token cap. Validation reward accuracy (0.649) did not detect
+this; validation loss did (0.695, the worst of the three). Checkpoint selection should therefore look at more than reward accuracy.
+\item \textbf{UF-DPO learned the preference signal, but the judge does not reward the result.} Validation reward accuracy is 0.775,
+yet the win rate is 52\% (CI includes 50\%). The visible change is length: answers are 62\% longer and 9.7\% hit the cap
+(vs.\ 2.3\% for SFT). With the anti-length rubric, the longer answer wins only 51\% of decisive pairs (90/177), so length is neither
+rewarded nor penalized. The extra text adds little content a 0.5B model gets right. Plausible causes: a small effective update
+($\beta{=}0.1$, 469 steps at $10^{-6}$), noisy UltraFeedback pairs written by much larger models, and the low ceiling of a 0.5B
+SFT model. A judge that, as in the length-controlled-AlpacaEval literature, \emph{favoured} length would probably have reported a
+win.
+\item \textbf{Transfer and alignment tax.} HH-DPO costs a little general helpfulness on AlpacaEval (45.8\%, CI upper bound 50\%), mostly on
+self-instruct and oasst tasks. UF-DPO gives no safety benefit on HH-eval (49\%): it is better on self-harm support (72\%, where longer,
+warmer answers help) and worse on legal/financial and safe-transformation prompts (27--28\%).
+\item \textbf{SFT is the largest single step} (76.8\% over the base model), mainly because the base model rarely stops (65\% of answers hit
+the cap). Some content errors survive all stages, for example listing living bear species (and tigers) as ``extinct''.
+\item \textbf{Persona: a clear style--quality trade-off.} Persona strength rises with the KL budget (style 55\% $\to$ 85\% $\to$ 94\%), and
+quality relative to the base instruct model falls (41\% $\to$ 24\% $\to$ 14\%), worst on safety-sensitive prompts (30\%/15\%/20\%). No run is
+both more stylized and as useful. The pre-registered rule therefore selects the mild $5\!\times\!10^{-5}$ adapter; the $10^{-4}$ adapter
+is the best compromise if persona strength is the priority. With only 198 pairs, DPO teaches the register (insults,
+exclamations) faster than it teaches the ``still give correct advice'' part of the chosen responses.
+\item \textbf{Judge reliability.} Position consistency is 61--80\% on the main comparisons, so a single-order judgment would carry 20--40\%
+position noise. Counting order-inconsistent pairs as ties makes the estimates conservative: many of the ties in Table~\ref{tab:main}
+are such disagreements.
 \end{itemize}
 
 %=====================================================================
 \section{Limitations and reproducibility}
 %=====================================================================
 \begin{itemize}
-\item Single seed per run. With $n{=}300$ the win-rate CI is roughly $\pm5$--6 points. One LLM judge, whose biases remain despite
+\item Single seed per run. With $n{=}300$ the win-rate CI is roughly $\pm4$--5 points. One LLM judge, whose biases remain despite
 order swapping and the explicit anti-length instruction. The persona evaluation set (40) and its validation split (22) are small.
+\item The persona track was judged with a different reasoning setting (\code{low}) and a revised style rubric, because the first
+persona judging was unusable (see the Judge paragraph in \S2). Its numbers are therefore not directly comparable to the general and safety comparisons.
+\item The HH learning rate (and the persona sweep) was chosen after seeing generation behavior. The HH choice was made by validation reward
+accuracy and loss, not by judge results, but the evaluation prompts were seen before the final runs.
 \item Greedy bf16 decoding in length-sorted batches can produce small batch-composition effects. Settings are identical
 across the models in each comparison.
-\item \textbf{Reproduce:} train and generate with \code{modal run modal\_app.py} (or the Kaggle T4 notebook
-\code{notebooks/}\allowbreak\code{kaggle\_t4\_pipeline.ipynb}); judge with \code{notebooks/}\allowbreak\code{kaggle\_judge.ipynb};
-fill the report with \code{scripts/}\allowbreak\code{fill\_report\_results.py}. Key artifacts:
+\item \textbf{Reproduce} with the commands and artifacts listed below.
 \end{itemize}
 \begin{center}\footnotesize
 \begin{tabular}{@{}ll@{}}
 \toprule
+Train + generate & \code{modal run modal\_app.py} \quad (Kaggle T4: \code{notebooks/kaggle\_t4\_pipeline.ipynb}) \\
+Judge (Kaggle) & \code{notebooks/kaggle\_judge.ipynb} \\
+Tables + report & \code{scripts/make\_report\_tables.py}, \code{scripts/fill\_report\_results.py} \\
+Style metrics & \code{scripts/persona\_style\_metrics.py} \\
+\midrule
 Configs & \code{configs/\{sft,dpo\_hh,dpo\_uf,lora\_dpo\}.yaml} \\
 Training logs & \code{outputs/\{sft,dpo\_hh,dpo\_uf\}/\{run\_config,summary\}.json}, \code{metrics.jsonl} \\
 LoRA runs & \code{outputs/lora\_dpo*/\{summary,log\_history,split\}.json} \\

@@ -1,0 +1,178 @@
+{
+  "lora_dpo": {
+    "overall": {
+      "n": 40,
+      "persona_marker_rate": 0.05,
+      "exclamations_per_100_words": 0.7840940912909549,
+      "repeated_4gram_rate": 0.014151694486688621,
+      "mean_words": 178.55,
+      "frac_hit_max_new_tokens": 0.05
+    },
+    "per_category": {
+      "coding": {
+        "n": 10,
+        "persona_marker_rate": 0.0,
+        "exclamations_per_100_words": 0.37273695420660274,
+        "repeated_4gram_rate": 0.048042878358774875,
+        "mean_words": 187.8,
+        "frac_hit_max_new_tokens": 0.2
+      },
+      "cooking": {
+        "n": 10,
+        "persona_marker_rate": 0.1,
+        "exclamations_per_100_words": 1.1278195488721805,
+        "repeated_4gram_rate": 0.002406530449399346,
+        "mean_words": 159.6,
+        "frac_hit_max_new_tokens": 0.0
+      },
+      "general_help": {
+        "n": 10,
+        "persona_marker_rate": 0.0,
+        "exclamations_per_100_words": 0.9003939223410242,
+        "repeated_4gram_rate": 0.0030551424179324923,
+        "mean_words": 177.7,
+        "frac_hit_max_new_tokens": 0.0
+      },
+      "safety_sensitive": {
+        "n": 10,
+        "persona_marker_rate": 0.1,
+        "exclamations_per_100_words": 0.7932310946589106,
+        "repeated_4gram_rate": 0.0031022267206477733,
+        "mean_words": 189.1,
+        "frac_hit_max_new_tokens": 0.0
+      }
+    }
+  },
+  "lora_dpo_lr1e-4_ep3": {
+    "overall": {
+      "n": 40,
+      "persona_marker_rate": 0.55,
+      "exclamations_per_100_words": 7.049044056525354,
+      "repeated_4gram_rate": 0.04054229836827188,
+      "mean_words": 150.375,
+      "frac_hit_max_new_tokens": 0.075
+    },
+    "per_category": {
+      "coding": {
+        "n": 10,
+        "persona_marker_rate": 0.5,
+        "exclamations_per_100_words": 6.675143038779402,
+        "repeated_4gram_rate": 0.08573426302460833,
+        "mean_words": 157.3,
+        "frac_hit_max_new_tokens": 0.1
+      },
+      "cooking": {
+        "n": 10,
+        "persona_marker_rate": 0.7,
+        "exclamations_per_100_words": 5.8526011560693645,
+        "repeated_4gram_rate": 0.004061390654917398,
+        "mean_words": 138.4,
+        "frac_hit_max_new_tokens": 0.1
+      },
+      "general_help": {
+        "n": 10,
+        "persona_marker_rate": 0.4,
+        "exclamations_per_100_words": 5.6424201223657375,
+        "repeated_4gram_rate": 0.0021220489495343297,
+        "mean_words": 147.1,
+        "frac_hit_max_new_tokens": 0.0
+      },
+      "safety_sensitive": {
+        "n": 10,
+        "persona_marker_rate": 0.6,
+        "exclamations_per_100_words": 9.766855702583491,
+        "repeated_4gram_rate": 0.07025149084402746,
+        "mean_words": 158.7,
+        "frac_hit_max_new_tokens": 0.1
+      }
+    }
+  },
+  "lora_dpo_lr2e-4_ep5": {
+    "overall": {
+      "n": 40,
+      "persona_marker_rate": 0.225,
+      "exclamations_per_100_words": 16.858000706464146,
+      "repeated_4gram_rate": 0.5444904650331208,
+      "mean_words": 283.1,
+      "frac_hit_max_new_tokens": 0.7
+    },
+    "per_category": {
+      "coding": {
+        "n": 10,
+        "persona_marker_rate": 0.4,
+        "exclamations_per_100_words": 15.440666204024982,
+        "repeated_4gram_rate": 0.5221091451773934,
+        "mean_words": 288.2,
+        "frac_hit_max_new_tokens": 0.7
+      },
+      "cooking": {
+        "n": 10,
+        "persona_marker_rate": 0.3,
+        "exclamations_per_100_words": 16.854293985204247,
+        "repeated_4gram_rate": 0.6151453120231484,
+        "mean_words": 310.9,
+        "frac_hit_max_new_tokens": 0.8
+      },
+      "general_help": {
+        "n": 10,
+        "persona_marker_rate": 0.1,
+        "exclamations_per_100_words": 15.67357512953368,
+        "repeated_4gram_rate": 0.3125586960314372,
+        "mean_words": 231.6,
+        "frac_hit_max_new_tokens": 0.4
+      },
+      "safety_sensitive": {
+        "n": 10,
+        "persona_marker_rate": 0.1,
+        "exclamations_per_100_words": 19.12495856811402,
+        "repeated_4gram_rate": 0.7281487069005046,
+        "mean_words": 301.7,
+        "frac_hit_max_new_tokens": 0.9
+      }
+    }
+  },
+  "smollm2-360m-instruct": {
+    "overall": {
+      "n": 40,
+      "persona_marker_rate": 0.0,
+      "exclamations_per_100_words": 0.24506270722214213,
+      "repeated_4gram_rate": 0.016205743692274295,
+      "mean_words": 173.425,
+      "frac_hit_max_new_tokens": 0.0
+    },
+    "per_category": {
+      "coding": {
+        "n": 10,
+        "persona_marker_rate": 0.0,
+        "exclamations_per_100_words": 0.0,
+        "repeated_4gram_rate": 0.03708059245470148,
+        "mean_words": 184.6,
+        "frac_hit_max_new_tokens": 0.0
+      },
+      "cooking": {
+        "n": 10,
+        "persona_marker_rate": 0.0,
+        "exclamations_per_100_words": 0.5328596802841918,
+        "repeated_4gram_rate": 0.009364562084487504,
+        "mean_words": 168.9,
+        "frac_hit_max_new_tokens": 0.0
+      },
+      "general_help": {
+        "n": 10,
+        "persona_marker_rate": 0.0,
+        "exclamations_per_100_words": 0.19950124688279303,
+        "repeated_4gram_rate": 0.004222637378695207,
+        "mean_words": 200.5,
+        "frac_hit_max_new_tokens": 0.0
+      },
+      "safety_sensitive": {
+        "n": 10,
+        "persona_marker_rate": 0.0,
+        "exclamations_per_100_words": 0.2863278453829635,
+        "repeated_4gram_rate": 0.014155182851212988,
+        "mean_words": 139.7,
+        "frac_hit_max_new_tokens": 0.0
+      }
+    }
+  }
+}

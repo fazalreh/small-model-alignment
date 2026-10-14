@@ -1,0 +1,138 @@
+{
+  "pairs_path": "/kaggle/input/datasets/fazalrehman03/pa2-judge-pairs/sft_vs_qwen2.5-0.5b-base_alpaca_pairs.jsonl",
+  "comparison": "sft_vs_qwen2.5-0.5b-base_alpaca",
+  "candidate": "sft",
+  "baseline": "qwen2.5-0.5b-base",
+  "judge_model": "google/gemini-3.6-flash",
+  "rubric": "general",
+  "orders_judged": [
+    "original",
+    "swapped"
+  ],
+  "tie_rule": "with both orders, a verdict counts only if both orders agree; otherwise tie",
+  "n_pairs": 300,
+  "judge_calls_items_ok": 600,
+  "items_needing_retry": 0,
+  "unresolved_items": 0,
+  "mean_chars_candidate": 859.5833333333334,
+  "mean_chars_baseline": 1865.4066666666668,
+  "criteria": {
+    "winner": {
+      "n": 300,
+      "wins": 199,
+      "losses": 38,
+      "ties": 63,
+      "unknown": 0,
+      "failures": 0,
+      "win_rate": 0.6633333333333333,
+      "win_rate_excl_ties": 0.8396624472573839,
+      "win_rate_ties_half": 0.7683333333333333,
+      "win_rate_ties_half_ci95": [
+        0.7283333333333334,
+        0.8066666666666666
+      ],
+      "loss_rate": 0.12666666666666668,
+      "tie_rate": 0.21,
+      "unknown_rate": 0.0,
+      "failure_rate": 0.0,
+      "position_consistency": 0.79,
+      "per_category": {
+        "helpful_base": {
+          "n": 51,
+          "wins": 36,
+          "losses": 6,
+          "ties": 9,
+          "unknown": 0,
+          "failures": 0,
+          "win_rate": 0.7058823529411765,
+          "win_rate_excl_ties": 0.8571428571428571,
+          "win_rate_ties_half": 0.7941176470588235,
+          "win_rate_ties_half_ci95": [
+            0.6862745098039216,
+            0.8823529411764706
+          ],
+          "loss_rate": 0.11764705882352941,
+          "tie_rate": 0.17647058823529413,
+          "unknown_rate": 0.0,
+          "failure_rate": 0.0
+        },
+        "koala": {
+          "n": 60,
+          "wins": 38,
+          "losses": 6,
+          "ties": 16,
+          "unknown": 0,
+          "failures": 0,
+          "win_rate": 0.6333333333333333,
+          "win_rate_excl_ties": 0.8636363636363636,
+          "win_rate_ties_half": 0.7666666666666667,
+          "win_rate_ties_half_ci95": [
+            0.675,
+            0.85
+          ],
+          "loss_rate": 0.1,
+          "tie_rate": 0.26666666666666666,
+          "unknown_rate": 0.0,
+          "failure_rate": 0.0
+        },
+        "oasst": {
+          "n": 54,
+          "wins": 33,
+          "losses": 9,
+          "ties": 12,
+          "unknown": 0,
+          "failures": 0,
+          "win_rate": 0.6111111111111112,
+          "win_rate_excl_ties": 0.7857142857142857,
+          "win_rate_ties_half": 0.7222222222222222,
+          "win_rate_ties_half_ci95": [
+            0.6203703703703703,
+            0.8240740740740741
+          ],
+          "loss_rate": 0.16666666666666666,
+          "tie_rate": 0.2222222222222222,
+          "unknown_rate": 0.0,
+          "failure_rate": 0.0
+        },
+        "selfinstruct": {
+          "n": 95,
+          "wins": 66,
+          "losses": 12,
+          "ties": 17,
+          "unknown": 0,
+          "failures": 0,
+          "win_rate": 0.6947368421052632,
+          "win_rate_excl_ties": 0.8461538461538461,
+          "win_rate_ties_half": 0.7842105263157895,
+          "win_rate_ties_half_ci95": [
+            0.7157894736842105,
+            0.8526315789473684
+          ],
+          "loss_rate": 0.12631578947368421,
+          "tie_rate": 0.17894736842105263,
+          "unknown_rate": 0.0,
+          "failure_rate": 0.0
+        },
+        "vicuna": {
+          "n": 40,
+          "wins": 26,
+          "losses": 5,
+          "ties": 9,
+          "unknown": 0,
+          "failures": 0,
+          "win_rate": 0.65,
+          "win_rate_excl_ties": 0.8387096774193549,
+          "win_rate_ties_half": 0.7625,
+          "win_rate_ties_half_ci95": [
+            0.65,
+            0.875
+          ],
+          "loss_rate": 0.125,
+          "tie_rate": 0.225,
+          "unknown_rate": 0.0,
+          "failure_rate": 0.0
+        }
+      }
+    }
+  }
+}
