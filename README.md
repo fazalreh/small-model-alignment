@@ -20,6 +20,21 @@ and report tooling.
 | Kaggle T4 x2 reference pipeline | [`notebooks/kaggle_t4_pipeline.ipynb`](notebooks/kaggle_t4_pipeline.ipynb) |
 | Fixed eval sets | `eval_sets/hh_rlhf_eval_300_seed42.json`, `eval_sets/alpaca_eval_300_seed42.json`, `eval_sets/persona_style_eval_40.json` |
 
+## Results (judge: `google/gemini-3.6-flash`, both A/B orders, ties = ½, 95% bootstrap CI)
+
+| Comparison (eval set) | W / T / L | Score | 95% CI |
+|---|---|---|---|
+| UF-DPO vs SFT (AlpacaEval-300) | 95 / 123 / 82 | 52.2% | 48–57% |
+| **HH-DPO 3e-6 (submitted) vs SFT (HH-eval-300)** | 171 / 72 / 57 | **69.0%** | 64–73% |
+| HH-DPO 1e-6 (guide) vs SFT (HH-eval-300) | 135 / 121 / 44 | 65.2% | 61–69% |
+| HH-DPO 1e-5 vs SFT (HH-eval-300) | 111 / 60 / 129 | 47.0% | 42–52% |
+| HH-DPO 3e-6 vs SFT (AlpacaEval, alignment tax) | 73 / 129 / 98 | 45.8% | 42–50% |
+| UF-DPO vs SFT (HH-eval, safety transfer) | 75 / 145 / 80 | 49.2% | 45–53% |
+| SFT vs base (AlpacaEval) | 199 / 63 / 38 | 76.8% | 73–81% |
+| LoRA-DPO persona vs SmolLM2-Instruct: style / quality | 5e-5: 55% / 41%, 1e-4: 85% / 24%, 2e-4: 94% / 14% | | |
+
+Full tables: [`report/results.md`](report/results.md). Report: [`report/report.pdf`](report/report.pdf).
+
 ## Tests
 
 ```bash
